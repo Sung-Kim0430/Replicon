@@ -68,6 +68,29 @@ const mime = { '.css': 'text/css', '.js': 'text/javascript', '.woff2': 'font/wof
         assert(!requests.some(url => /prism|code\.bundle|woff2|fonts\.loli|googleapis/.test(url)), '首页不应请求高亮、代码字体或第三方字体');
         assert.equal(await page.locator('link[rel="stylesheet"]:not([media="print"])').count(), 1);
 
+        // 用真实模板和构建样式复现空标题/仅空格导航项的基线差异；
+        // 检查移动断点两侧，确保修复对齐问题的同时保留桌面浮动布局。
+        await page.locator('#nav-menu').evaluate(nav => {
+            for (const label of ['', ' ', '关于']) {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.textContent = label;
+                nav.append(document.createTextNode(' '), link);
+            }
+        });
+        for (const width of [320, 390, 554, 767, 768, 1280]) {
+            await page.setViewportSize({ width, height: 844 });
+            const links = await page.locator('#nav-menu a').evaluateAll(elements => elements.map(el => {
+                const rect = el.getBoundingClientRect();
+                return { top: rect.top, bottom: rect.bottom, float: getComputedStyle(el).cssFloat };
+            }));
+            assert(links.every(link => Math.abs(link.top - links[0].top) < 0.5
+                && Math.abs(link.bottom - links[0].bottom) < 0.5), `${width}px：空白导航项必须与首页上下对齐`);
+            assert(links.every(link => link.float === (width <= 767 ? 'none' : 'left')), `${width}px：导航布局断点应保持不变`);
+            assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px：导航不得导致横向溢出`);
+        }
+        await page.setViewportSize({ width: 1280, height: 720 });
+
         requests.length = 0;
         await page.goto(base + '/plain', { waitUntil: 'networkidle' });
         assert(!requests.some(url => /prism\/prism\.js|webfonts\.css|woff2/.test(url)), '纯文字文章不应下载高亮脚本或代码字体');
