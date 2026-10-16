@@ -1,0 +1,12 @@
+# 固定源码换行，避免 Windows/Linux 检出方式改变构建结果；字体和图片按二进制处理。
+* text=auto
+*.php text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.cjs text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.woff2 binary
+*.ttf binary
+*.png binary

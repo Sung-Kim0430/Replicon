@@ -1,0 +1,33 @@
+# 本地环境配置和凭据；示例配置可提交
+.env
+.env.*
+!.env.example
+
+# 编辑器配置与系统生成文件
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# 仅开发时使用的依赖、虚拟环境和 Python 缓存
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 测试报告、日志与本地临时文件；不排除正式测试源码
+/tmp/
+/temp/
+/test-results/
+/playwright-report/
+/coverage/
+*.log
+
+# 刻意保留 assets/css/*.bundle.css、webfonts.css 和 fonts/web/*.woff2。
+# 它们是部署所需资源，随源码提交后安装主题才无需 Python/Node.js 构建。
