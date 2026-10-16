@@ -14,6 +14,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* 尊重系统的减少动态效果设置，避免目录跳转时强制播放平滑滚动动画。 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 ::selection{
   background-color: #60a5fa40;
 }

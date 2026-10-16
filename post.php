@@ -2,9 +2,12 @@
 <?php $this->need('header.php'); ?>
 <?php
     $this->need('toc.php');
-    $originalContent = $this->content;
-    $this->content = addIDsToHeadings($originalContent);
-    $this->toc = generateToc($this->content);
+    $showToc = !empty($this->options->sidebarBlock)
+        && in_array('ShowTOC', $this->options->sidebarBlock);
+    // 一次 DOM 解析取得正文和标题列表；关闭目录后仍保留可分享的标题锚点。
+    $prepared = prepareArticleHeadings($this->content);
+    $this->content = $prepared['content'];
+    $this->toc = $showToc ? generateTocByHeadings($prepared['headings']) : '';
 ?>
 
 <div class="col-mb-12 col-8" id="main" role="main">
