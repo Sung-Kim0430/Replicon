@@ -36,9 +36,10 @@
     <div class="container">
         <div class="row">
             <div class="site-name col-mb-12 col-9">
-                <?php if ($this->options->logoUrl): ?>
+                <?php $logoUrl = repliconLogoUrl($this->options->logoUrl); ?>
+                <?php if ($logoUrl !== ''): ?>
                     <a id="logo" href="<?php $this->options->siteUrl(); ?>">
-                        <img src="<?php $this->options->logoUrl() ?>" alt="<?php $this->options->title() ?>"/>
+                        <img src="<?php echo repliconEscape($logoUrl); ?>" alt="<?php echo repliconEscape($this->options->title); ?>"/>
                     </a>
                 <?php else: ?>
                     <a id="logo" href="<?php $this->options->siteUrl(); ?>"><?php $this->options->title() ?></a>

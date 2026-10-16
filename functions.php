@@ -59,6 +59,28 @@ function themeConfig($form)
     $form->addInput($prismjsLineNumbers);
 }
 
+/**
+ * 把主题配置作为纯文本或双引号属性输出，不允许配置内容生成标签或事件属性。
+ * 兼容 Typecho 已编码的标题实体，避免重复编码；无效 UTF-8 字节用替代字符显示。
+ * 正文、评论和插件输出有独立的 HTML 契约，不应使用此函数整体转义。
+ */
+function repliconEscape($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+}
+
+/**
+ * LOGO 仅允许 HTTP(S) 绝对地址；协议校验不能用 HTML 属性转义来替代。
+ * 此函数只检查字符串，不在服务器端下载图片，因此不会新增 SSRF 入口。
+ */
+function repliconLogoUrl($value)
+{
+    $url = trim((string) $value);
+    if (!filter_var($url, FILTER_VALIDATE_URL)) return '';
+    $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+    return in_array($scheme, ['http', 'https'], true) ? $url : '';
+}
+
 function postMeta(
     \Widget\Archive $archive,
     string $metaType = 'archive'
