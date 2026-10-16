@@ -57,6 +57,31 @@ function themeConfig($form)
     $form->addInput($copyrightInfo);
     $form->addInput($beianInfo);
     $form->addInput($prismjsLineNumbers);
+
+    // 默认使用随主题发布的本服务器字体，不依赖访客访问外部字体站点。
+    // 系统字体和第三方来源保留为明确可选项，不同时下载两套相同字形。
+    $serifFontSource = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'serifFontSource',
+        [
+            'local' => _t('Noto Serif SC（本服务器，默认）'),
+            'system' => _t('系统字体（无需外部请求）'),
+            // 'loli' => _t('Noto Serif SC（loli 镜像）'), // 按站点要求停用，仅保留参考。
+            'google' => _t('Noto Serif SC（Google Fonts）')
+        ],
+        'local',
+        _t('正文衬线字体来源'),
+        _t('默认从本服务器按需加载 Noto Serif SC 分片，下载期间先显示系统字体。可改用系统字体或 Google Fonts。')
+    );
+    $form->addInput($serifFontSource);
+}
+
+/**
+ * 为本地 CSS/JS 添加修改时间版本号，更新主题后自动避开旧缓存。
+ * $path 必须是代码中的固定相对路径，不接受用户输入，不作为任意文件下载接口。
+ */
+function repliconAssetUrl($options, $path)
+{
+    $options->themeUrl($path . '?v=' . filemtime(__DIR__ . '/' . $path));
 }
 
 /**
